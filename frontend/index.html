@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Google Platform Library -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <!-- Google Sign-In client ID -->
+    <meta name="google-signin-client_id" content="476218162346-cru2m598g6dd68ube3p0f7s6h7eaolo2.apps.googleusercontent.com">
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link href="/src/index.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + React</title>
+
+    <style>
+      .goog-te-banner-frame.skiptranslate {
+        display: none !important;
+      }
+    
+      body {
+        top: 0px !important;
+      }
+    
+      .goog-te-gadget,
+      .goog-te-combo,
+      iframe.goog-te-banner-frame {
+        display: none !important;
+      }
+    </style>
+    
+
+    <script type="text/javascript">
+      function googleTranslateElementInit() {
+        new google.translate.TranslateElement({
+          pageLanguage: 'en',
+          autoDisplay: false
+        }, 'google_translate_element');
+      }
+    </script>
+    <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+    <div id="google_translate_element" style="display: none;"></div>
+  </body>
+</html>

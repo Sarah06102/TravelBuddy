@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+.fade-image {
+    opacity: 0;
+    animation-duration: 18s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+    transition: opacity 1s ease-in-out;
+}
+  
+@keyframes fade1 {
+    0% { opacity: 1; }
+    33% { opacity: 0; }
+    100% { opacity: 0; }
+}
+
+@keyframes fade2 {
+    0% { opacity: 0; }
+    33% { opacity: 1; }
+    66% { opacity: 0; }
+    100% { opacity: 0; }
+}
+
+@keyframes fade3 {
+    0% { opacity: 0; }
+    66% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+body > .skiptranslate {
+    display: none !important;
+}
+  
+body {
+    top: 0px !important;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+.scrollbar-hide {
+    -ms-overflow-style: none; 
+    scrollbar-width: none;
+}
+  
