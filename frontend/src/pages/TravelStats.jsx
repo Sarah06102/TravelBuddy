@@ -45,6 +45,7 @@ const TravelStats = () => {
     const destinations = trips.map(trip => trip.destination);
     const plannedBudgets = trips.map(trip => trip.budget || 0);
     const actualSpends = trips.map(trip => trip.status === "Completed" ? trip.actualSpent || 0 : null); 
+    const totalSpent = actualSpends.reduce((sum, val) => sum + (val || 0), 0);
 
     const barData = {
         labels: trips.map(t => t.destination),
@@ -164,7 +165,7 @@ const TravelStats = () => {
                 <div className="bg-white border p-4 rounded-xl shadow flex items-center gap-3">
                     <DollarSign className="w-6 h-6 text-orange-600" />
                     <div>
-                        <p className="text-lg font-semibold">${actualSpends.toLocaleString()}</p>
+                        <p className="text-lg font-semibold">${totalSpent.toLocaleString()}</p>
                         <p className="text-sm text-gray-500">Total Spent</p>
                     </div>
                 </div>

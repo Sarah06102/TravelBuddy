@@ -264,7 +264,7 @@ const categorizeDestinations = (destList) => {
   
     // Popular locations
     const popular = destList.filter((d) =>
-      ["France", "Japan", "Italy", "United States", "Canada"].includes(d.name)
+      ["France", "Japan", "Italy", "United States", "Canada", "Mexico", "United Arab Emirates", "United Kingdom", "Greece", "Spain"].includes(d.name)
     );
   
     if (popular.length) {
@@ -348,7 +348,7 @@ const ExploreDestinations = () => {
         return Array.from(interestSet);
     }, [destinations]);
 
-    const PIXABAY_API_KEY = "51138428-dfeb24a563c1588b52a139424";
+    const PIXABAY_API_KEY = import.meta.env.VITE_PIXABAY_API_KEY;
 
     const toggleInterest = (interest) => {-
         setSelectedInterests((prev) =>
@@ -374,37 +374,33 @@ const ExploreDestinations = () => {
   
     useEffect(() => {
         const fetchImages = async () => {
-            const newImages = {};
             const limitedDestinations = destinations.slice(0, 250);
-  
-            for (const dest of limitedDestinations) {
-                if (!images[dest.name]) {
-                    const query = `${dest.name} travel`;
-                    try {
-                        const res = await fetch(`https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${encodeURIComponent(query)}&image_type=photo&per_page=3`);
-                        const data = await res.json();
-                        let imageUrl;
-
-                        if (data.hits && data.hits.length > 0) {
-                            imageUrl = data.hits[0].webformatURL;
-                        } else {
-                            if (dest.name === "Cocos (Keeling) Islands") {
-                                imageUrl = "https://flagcdn.com/w320/cc.png"; // Cocos Islands flag
-                            } else if (dest.name === "Vatican City State (Holy See)") {
-                                imageUrl = "https://flagcdn.com/w320/va.png"; // Vatican flag
-                            } else {
-                                imageUrl = `https://source.unsplash.com/300x200/?${encodeURIComponent(dest.name + " travel")}`;
-                            }
-                        }
-                        newImages[dest.name] = imageUrl;
-                    } catch (err) {
-                        console.error(`Image fetch failed for ${dest.name}`, err);
-                        newImages[dest.name] = `https://source.unsplash.com/300x200/?${encodeURIComponent(dest.name + ' travel')}`;
+          
+            const fetches = limitedDestinations.map(async (dest) => {
+                if (images[dest.name]) return { [dest.name]: images[dest.name] };
+          
+                const query = `${dest.name} travel`;
+                try {
+                    const res = await fetch(`https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${encodeURIComponent(query)}&image_type=photo&per_page=3`);
+                    const data = await res.json();
+                    let imageUrl;
+          
+                    if (data.hits && data.hits.length > 0) {
+                        imageUrl = data.hits[0].webformatURL;
+                    } else {
+                        imageUrl = `https://source.unsplash.com/featured/?${encodeURIComponent(dest.name + ' travel')}`;
                     }
+          
+                    return { [dest.name]: imageUrl };
+                } catch (err) {
+                    console.error(`Image fetch failed for ${dest.name}`, err);
+                    return { [dest.name]: `https://source.unsplash.com/featured/?${encodeURIComponent(dest.name + ' travel')}` };
                 }
-            }
-            setImages((prev) => ({ ...prev, ...newImages }));
-        };
+            });
+            const results = await Promise.all(fetches);
+            const merged = Object.assign({}, ...results);
+            setImages((prev) => ({ ...prev, ...merged }));
+        };          
         if (destinations.length > 0) fetchImages();
     }, [destinations]);
   

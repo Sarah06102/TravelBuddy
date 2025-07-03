@@ -45,7 +45,6 @@ const CreateTripModal = ({ isOpen, onClose, onTripCreated }) => {
             budget: parseFloat(budget),
             status: selected,
             description,
-            actualSpent: selected === "Completed" ? parseFloat(actualSpent) : null,
         };
         
         try {
