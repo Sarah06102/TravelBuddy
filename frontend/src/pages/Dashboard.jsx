@@ -68,11 +68,19 @@ const Dashboard = () => {
       {/* Greeting */}
       <div className="border border-gray-300 px-10 py-8">
         <div className="flex items-center justify-between">
+
+          {/* Left: Welcome text */}
           <div className="flex flex-col">
             <h1 className="text-3xl font-bold">Welcome back, {firstName}!</h1>
             <p className="text-gray-500">Plan your next adventure or manage existing trips.</p>
           </div>
-          <button onClick={() => setShowModal(true)} className="bg-blue-500 text-white rounded-xl px-5 py-3 font-medium hover:bg-blue-600 transition cursor-pointer mr-10">+ New Trip</button>
+
+          {/* Right: Buttons */}
+          <div className="flex gap-4">
+            <button onClick={() => navigate(`/budget-planner`)} className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg cursor-pointer">Plan your trip budget</button>
+            <button onClick={() => setShowModal(true)} className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg cursor-pointer">+ New Trip</button>
+          </div>
+
         </div>
       </div>
 

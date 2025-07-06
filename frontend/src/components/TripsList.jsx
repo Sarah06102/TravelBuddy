@@ -112,7 +112,7 @@ const TripList = ({ trips }) => {
                     </p>
                     <p className="text-sm mt-1 text-green-600">${typeof trip.budget === 'number' ? trip.budget.toFixed(2) : '0.00'} Budget</p>
                     {trip.status === "Completed" && trip.actualSpent != null && (
-                        <div className="mt-2">
+                        <div className="mt-1">
                             <label className="block text-sm font-medium">Actual Spent</label>
                             <p className="mt-1 text-gray-800 text-sm font-semibold">${trip.actualSpent?.toFixed(2) || "0.00"}</p>
                         </div>

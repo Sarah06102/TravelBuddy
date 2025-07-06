@@ -7,6 +7,7 @@ import TravelJournal from './TravelJournal';
 import WeatherWidget from './WeatherWidget';
 import ExploreDestinations from '../pages/ExploreDestinations';
 import TravelStats from '../pages/TravelStats';
+import PlanBudget from '../pages/PlanBudget';
 
 export const Router = createBrowserRouter([
     { path: "/", element: <LandingPage />}, 
@@ -17,6 +18,7 @@ export const Router = createBrowserRouter([
     { path: "trip/:tripId/weather", element: <WeatherWidget />},
     { path: "explore-destinations", element: <ExploreDestinations />},
     { path: "travel-stats", element: <TravelStats />},
+    { path: "/budget-planner", element: <PlanBudget />},
 ]);
 
 export default Router

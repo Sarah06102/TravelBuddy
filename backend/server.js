@@ -14,7 +14,7 @@ const cors = require('cors');
 const app = express();
 const PORT = 3000;
 
-// Connect to MongoDB database
+// Connect to MongoDB databases
 mongoose.connect(process.env.MONGO_URI).then(() => {
     console.log('Connected to MongoDB');
 }).catch((error) => {
@@ -36,6 +36,13 @@ const tripSchema = new mongoose.Schema({
     startDate: String,
     endDate: String,
     budget: Number,
+    expenses: [
+        {
+            category: String,
+            amount: Number,
+            note: String,
+        }
+    ],
     actualSpent: Number,
     status: String,
     description: String,
@@ -49,7 +56,7 @@ const Trip = mongoose.model('Trip', tripSchema);
 // Middleware to parse JSON bodies
 app.use(cors({
     origin: 'http://localhost:5173',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization']
 }));     
@@ -152,7 +159,6 @@ app.post('/api/google-login', async (req, res) => {
         res.status(401).json({ error: 'Invalid Google token' });
     }
 });
-
 
 // Protected route to get user details 
 app.get('/api/user', verifyToken, async (req, res) => {
@@ -262,6 +268,33 @@ app.put('/api/trips/:id', verifyToken, async (req, res) => {
         res.json(updatedTrip);
     } catch (err) {
         res.status(500).json({ error: 'Failed to update trip' });
+    }
+});
+
+// Route to update trip budget and expenses only
+app.patch('/api/trips/:id/budget', verifyToken, async (req, res) => {
+    try {
+        const { budget, expenses } = req.body;
+        console.log("Received PATCH:", { budget, expenses });
+
+        if (typeof budget !== 'number' || isNaN(budget)) {
+            return res.status(400).json({ error: "Budget must be a valid number" });
+        }
+
+        const updatedTrip = await Trip.findByIdAndUpdate(
+            req.params.id,
+            { budget, expenses },
+            { new: true }
+        );
+
+        if (!updatedTrip) {
+            return res.status(404).json({ error: 'Trip not found' });
+        }
+
+        res.status(200).json(updatedTrip);
+    } catch (err) {
+        console.error('Error updating trip budget:', err);
+        res.status(500).json({ error: 'Failed to update budget' });
     }
 });
 
