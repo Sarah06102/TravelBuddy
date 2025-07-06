@@ -6,6 +6,7 @@ import { IoMdStats } from "react-icons/io";
 import CreateTripModal from './CreateTripModal';
 import TripList from '../components/TripsList';
 import { useNavigate } from 'react-router-dom';
+import TravelTips from '../components/TravelTips';
 
 const Dashboard = () => {
   const [firstName, setFirstName] = useState("");
@@ -13,6 +14,7 @@ const Dashboard = () => {
   const [refreshTrips, setRefreshTrips] = useState(false);
   const [trips, setTrips] = useState([]);
   const navigate = useNavigate();
+  const [selectedTrip, setSelectedTrip] = useState(null);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -162,10 +164,26 @@ const Dashboard = () => {
         </div>
 
         {/* Travel Tips */}
-        <div className="bg-white shadow-md border border-gray-200 rounded-xl p-8 text-center mt-10">
-          <h1 className="text-xl font-semibold mb-6 text-left">Travel Tips</h1>
-          <div className="flex flex-col items-center justify-center text-gray-500 pb-20">
+        <div className="bg-white shadow-md border border-gray-200 rounded-xl p-8 mt-10">
+          <h1 className="text-xl font-semibold mb-4 text-left">Travel Tips</h1>
+
+          {/* Trip Selector */}
+          <div className="mb-4">
+            <label htmlFor="tripSelect" className="block mb-1 text-sm font-medium text-gray-700">Select a Trip</label>
+            <select id="tripSelect" onChange={(e) => {
+                const tripId = e.target.value;
+                const trip = trips.find(t => t._id === tripId);
+                setSelectedTrip(trip || null);
+              }} className="w-full p-2 border border-gray-300 rounded">
+              <option value="">-- Choose a trip --</option>
+                {trips.map(trip => (
+                  <option key={trip._id} value={trip._id}>{trip.name}</option>
+                ))}
+            </select>
           </div>
+
+          {/* Travel Tips Component */}
+          <TravelTips selectedTrip={selectedTrip} />
         </div>
         <CreateTripModal isOpen={showModal} onTripCreated={handleTripCreated} onClose={() => setShowModal(false)} />
       </div>

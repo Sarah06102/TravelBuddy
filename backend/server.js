@@ -1,5 +1,6 @@
 const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+const { CohereClient } = require("cohere-ai");
 
 // Import required modules
 const express = require('express');
@@ -8,6 +9,10 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const session = require('express-session');
+const axios = require('axios');
+const cohere = new CohereClient({
+    token: process.env.COHERE_API_KEY,
+});
 
 // Create an Express application instance
 const cors = require('cors');
@@ -47,6 +52,7 @@ const tripSchema = new mongoose.Schema({
     status: String,
     description: String,
     email: String,
+    travelTips: [{ tip: String, userAdded: Boolean }],
 });
 
 // Create a user & trip model baseed on the schema
@@ -195,7 +201,7 @@ app.get('/api/trips/:id', verifyToken, async (req, res) => {
         if (!trip) {
             return res.status(404).json({ error: 'Trip not found' });
         }
-        // Optional: check if the trip belongs to the authenticated user
+        // Check if the trip belongs to the authenticated user
         if (trip.email !== req.user.email) {
             return res.status(403).json({ error: 'Access denied' });
         }
@@ -295,6 +301,37 @@ app.patch('/api/trips/:id/budget', verifyToken, async (req, res) => {
     } catch (err) {
         console.error('Error updating trip budget:', err);
         res.status(500).json({ error: 'Failed to update budget' });
+    }
+});
+
+// Route to use cohere ai to generate travel tips
+app.post('/api/tips/generate', verifyToken, async (req, res) => {
+    const { destination } = req.body;
+  
+    if (!destination) {
+        return res.status(400).json({ error: "Destination is required" });
+    }
+  
+    try {
+        const prompt = `Give 5 useful travel tips for someone visiting ${destination}. Return them as a numbered list.`;
+  
+        const response = await cohere.generate({
+            model: "command-r-plus",
+            prompt,
+            max_tokens: 200,
+            temperature: 0.8
+        });
+  
+        const text = response.generations[0]?.text || "";
+        const tipsArray = text.split('\n').filter(t => t.trim()).map(t => ({
+            tip: t.replace(/^\d+\.\s*/, '').trim(),
+            userAdded: false
+        }));
+  
+        res.status(200).json(tipsArray);
+    } catch (err) {
+        console.error("Cohere API Error:", err);
+        res.status(500).json({ error: "Cohere failed to generate tips." });
     }
 });
 
